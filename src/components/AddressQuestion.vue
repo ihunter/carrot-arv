@@ -1,6 +1,12 @@
 <script setup>
 import { ref } from "vue";
 
+const props = defineProps({
+  question: {
+    type: String,
+  },
+});
+
 const emit = defineEmits(["answer", "address"]);
 
 const place = ref({});
@@ -40,6 +46,7 @@ async function setPlace(e) {
 
 <template>
   <div>
+    <h2>{{ props.question }}</h2>
     <GMapAutocomplete
       placeholder="Enter an address here"
       @place_changed="setPlace"

@@ -11,6 +11,7 @@ const showDialog = ref(false);
     <section>
       <DialogBox
         max-width="800px"
+        height="600px"
         :show="showDialog"
         @close="showDialog = false"
       >

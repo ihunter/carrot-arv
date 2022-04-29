@@ -12,6 +12,10 @@ const props = defineProps({
     type: String,
     default: "auto",
   },
+  height: {
+    type: String,
+    default: "auto",
+  },
 });
 
 const displayStyle = computed(() => {
@@ -27,7 +31,7 @@ const displayStyle = computed(() => {
   >
     <div
       class="dialog-content"
-      :style="{ maxWidth: props.maxWidth }"
+      :style="{ maxWidth: props.maxWidth, height: props.height }"
       @click.stop
     >
       <slot></slot>

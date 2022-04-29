@@ -52,11 +52,6 @@ const excellentQuestions = ref([
     component: markRaw(OfferResults),
     answer: null,
   },
-  {
-    name: "contact",
-    component: "CashOfferContactInfo",
-    answer: null,
-  },
 ]);
 
 const goodQuestions = ref([
@@ -89,11 +84,6 @@ const goodQuestions = ref([
   {
     name: "estimate",
     component: markRaw(OfferResults),
-    answer: true,
-  },
-  {
-    name: "contact",
-    component: "CashOfferContactInfo",
     answer: true,
   },
 ]);
@@ -130,11 +120,6 @@ const fairQuestions = ref([
     component: markRaw(OfferResults),
     answer: true,
   },
-  {
-    name: "contact",
-    component: "CashOfferContactInfo",
-    answer: true,
-  },
 ]);
 
 const badQuestions = ref([
@@ -148,11 +133,6 @@ const badQuestions = ref([
   {
     name: "estimate",
     component: markRaw(OfferResults),
-    answer: true,
-  },
-  {
-    name: "contact",
-    component: "CashOfferContactInfo",
     answer: true,
   },
 ]);
@@ -195,6 +175,19 @@ const currentQuestion = computed(() => {
 
 const currrentAnswer = computed(() => {
   return questions.value[questionIndex.value].answer;
+});
+
+const answers = computed(() => {
+  const data = {};
+  questions.value.forEach((q) => {
+    data[q.name] = q.answer;
+  });
+
+  data.est_arv = arv.value;
+  data.living_area = livingArea.value;
+  data.baths = baths.value;
+
+  return data;
 });
 
 function nextQuestion() {
@@ -287,6 +280,8 @@ const nextButtonDisabled = computed(() => {
 });
 
 const arv = ref(null);
+const livingArea = ref(null);
+const baths = ref(null);
 
 async function getARV(addressData) {
   const res = await api.post("calc_arv", addressData);
@@ -297,6 +292,9 @@ async function getARV(addressData) {
   const subject = data.properties.subject;
   const constants = data.constants;
 
+  livingArea.value = subject.livingArea;
+  baths.value = subject.baths;
+
   const { calculateARV } = useARV(comps, subject, constants, true);
 
   arv.value = calculateARV();
@@ -304,6 +302,12 @@ async function getARV(addressData) {
 
 function close() {
   emit("close");
+  // reset questions
+  questionIndex.value = 0;
+  questions.value.forEach((q) => {
+    q.answer = null;
+  });
+  questions.value = initQuestions.value;
 }
 </script>
 
@@ -315,12 +319,13 @@ function close() {
       <button @click="close" class="close-btn">X</button>
     </div>
     <div class="question-content">
-      <h2>{{ currentQuestion.question }}</h2>
       <component
         :is="currentQuestion.component"
+        :question="currentQuestion.question"
         :current-answer="currrentAnswer"
         :condition="selectedCondtion"
         :arv="arv"
+        :answers="answers"
         @answer="recordAnswer"
         @address="getARV"
       ></component>
@@ -338,6 +343,9 @@ function close() {
 
 <style lang="scss" scoped>
 .question-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   .top-bar {
     height: 0.5rem;
     background-color: var(--color-brand);
@@ -360,6 +368,10 @@ function close() {
   }
 
   .question-content {
+    display: flex;
+    flex-direction: column;
+    // justify-content: space-between;
+    flex: 1 1 auto;
     padding: 1rem 1.5rem;
 
     h2 {

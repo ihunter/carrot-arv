@@ -1,5 +1,8 @@
 <script setup>
 const props = defineProps({
+  question: {
+    type: String,
+  },
   currentAnswer: {
     type: String,
   },
@@ -9,6 +12,7 @@ defineEmits(["answer"]);
 </script>
 
 <template>
+  <h2>{{ props.question }}</h2>
   <div class="condition-container">
     <div
       class="condition-card"
