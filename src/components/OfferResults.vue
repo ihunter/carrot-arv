@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import axios from "axios";
 
 // import { useARV } from "@/composables/arv.js";
@@ -18,6 +18,7 @@ const props = defineProps({
   answers: {
     type: Object,
   },
+  loadingARV: Boolean,
 });
 
 const loading = ref(false);
@@ -26,6 +27,13 @@ const fees = ref(0);
 const rehab = ref(0);
 
 async function calculateRehabCostsAPI() {
+  if (props.loadingARV) {
+    console.log("ARV NOT READY");
+    return;
+  }
+
+  console.log("ARV IS READY");
+
   loading.value = true;
   // const { calculateARV } = useARV(comps, subject, constants, true);
 
@@ -40,6 +48,13 @@ async function calculateRehabCostsAPI() {
 
   loading.value = false;
 }
+
+watch(
+  () => props.loadingARV,
+  (newVal, oldVal) => {
+    calculateRehabCostsAPI();
+  }
+);
 
 onMounted(() => {
   calculateRehabCostsAPI();

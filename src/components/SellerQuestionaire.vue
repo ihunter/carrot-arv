@@ -283,7 +283,10 @@ const arv = ref(null);
 const livingArea = ref(null);
 const baths = ref(null);
 
+const loadingARV = ref(false);
+
 async function getARV(addressData) {
+  loadingARV.value = true;
   const res = await api.post("calc_arv", addressData);
 
   const { data } = res;
@@ -298,6 +301,8 @@ async function getARV(addressData) {
   const { calculateARV } = useARV(comps, subject, constants, true);
 
   arv.value = calculateARV();
+
+  loadingARV.value = false;
 }
 
 function close() {
@@ -326,6 +331,7 @@ function close() {
         :condition="selectedCondtion"
         :arv="arv"
         :answers="answers"
+        :loadingARV="loadingARV"
         @answer="recordAnswer"
         @address="getARV"
       ></component>
