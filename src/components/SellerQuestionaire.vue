@@ -5,6 +5,7 @@ import AddressQuestion from "@/components/AddressQuestion.vue";
 import BinaryQuestion from "@/components/BinaryQuestion.vue";
 import ConditionQuestion from "@/components/ConditionQuestion.vue";
 import OfferResults from "@/components/OfferResults.vue";
+import SignUpForm from "./SignUpForm.vue";
 
 import { useARV } from "@/composables/arv.js";
 
@@ -17,6 +18,12 @@ const api = axios.create({
 const questionIndex = ref(0);
 
 const questions = ref([
+  {
+    name: "signup",
+    question: "Sign Up",
+    component: markRaw(SignUpForm),
+    answer: null,
+  },
   {
     name: "address",
     question: "To get started, please enter a property address below.",
