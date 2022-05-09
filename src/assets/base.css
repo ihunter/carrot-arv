@@ -4,6 +4,7 @@
 :root {
   --color-brand: #1e73be;
   --color-brand-hover: rgba(30, 115, 190, 0.2);
+  --color-button: #f25116;
 
   --nav-top-background-color: #373a3c;
   --nav-bottom-background-color: #1e73be;

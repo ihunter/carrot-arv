@@ -116,6 +116,13 @@ header {
   }
 }
 
-@media (min-width: 1024px) {
+@media (max-width: 800px) {
+  nav {
+    flex-direction: column;
+
+    ul {
+      flex-direction: column;
+    }
+  }
 }
 </style>
