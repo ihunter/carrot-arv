@@ -1,6 +1,13 @@
 <script setup>
+import { computed } from "@vue/reactivity";
 import axios from "axios";
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
+
+const props = defineProps({
+  question: String,
+});
+
+const emit = defineEmits(["answer"]);
 
 const api = axios.create({
   baseURL: "https://backend.ehomefacts.com/api",
@@ -34,10 +41,23 @@ async function createAccount() {
     console.error(error);
   }
 }
+
+const valid = computed(() => {
+  return !!formData.email && !!formData.first_name && !!formData.last_name;
+});
+
+watch(valid, () => {
+  if (valid) {
+    emit("answer", formData);
+  } else {
+    emit("answer", null);
+  }
+});
 </script>
 
 <template>
   <div>
+    <h1>{{ props.question }}</h1>
     <form @submit.prevent="createAccount" class="sign-up-form">
       <input
         v-model="formData.first_name"
@@ -58,7 +78,7 @@ async function createAccount() {
         placeholder="Email"
       />
 
-      <input
+      <!-- <input
         v-model="formData.street"
         class="col-12"
         type="text"
@@ -81,9 +101,9 @@ async function createAccount() {
         class="col-3"
         type="text"
         placeholder="Zipcode"
-      />
+      /> -->
 
-      <div class="col-12" style="margin: 0.5rem 0">
+      <!-- <div class="col-12" style="margin: 0.5rem 0">
         <input
           v-model="formData.is_owner"
           type="checkbox"
@@ -104,9 +124,9 @@ async function createAccount() {
           id="owners"
           rows="5"
         ></textarea>
-      </div>
+      </div> -->
 
-      <input
+      <!-- <input
         v-model="formData.password"
         class="col-6"
         type="password"
@@ -125,19 +145,19 @@ async function createAccount() {
           By checking the box you acknowledge that you have read and agree to
           the <span class="tos-link">Terms of Service</span>
         </label>
-      </div>
+      </div> -->
 
-      <div class="actions">
+      <!-- <div class="actions">
         <button class="cancel-btn">cancel</button>
         <button type="submit" class="create-btn">Create Account</button>
-      </div>
+      </div> -->
     </form>
   </div>
 </template>
 
 <style lang="scss" scoped>
 $input-margin: 0.5rem;
-$input-padding: 0.5rem;
+$input-padding: 1rem;
 .sign-up-form {
   display: flex;
   flex-wrap: wrap;

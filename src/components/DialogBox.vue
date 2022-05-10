@@ -31,7 +31,11 @@ const displayStyle = computed(() => {
   >
     <div
       class="dialog-content"
-      :style="{ maxWidth: props.maxWidth, minHeight: props.height }"
+      :style="{
+        maxWidth: props.maxWidth,
+        minHeight: props.height,
+        height: props.height,
+      }"
       @click.stop
     >
       <slot></slot>

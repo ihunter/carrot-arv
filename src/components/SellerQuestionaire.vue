@@ -19,12 +19,6 @@ const questionIndex = ref(0);
 
 const questions = ref([
   {
-    name: "signup",
-    question: "Sign Up",
-    component: markRaw(SignUpForm),
-    answer: null,
-  },
-  {
     name: "address",
     question: "To get started, please enter a property address below.",
     component: markRaw(AddressQuestion),
@@ -54,6 +48,12 @@ const initQuestions = ref([
 ]);
 
 const excellentQuestions = ref([
+  {
+    name: "signup",
+    question: "Where would you like us to send your offer?",
+    component: markRaw(SignUpForm),
+    answer: null,
+  },
   {
     name: "estimate",
     component: markRaw(OfferResults),
@@ -86,6 +86,12 @@ const goodQuestions = ref([
     question:
       "Does your house have any present signs of settlement or sinkhole activity?",
     component: markRaw(BinaryQuestion),
+    answer: null,
+  },
+  {
+    name: "signup",
+    question: "Where would you like us to send your offer?",
+    component: markRaw(SignUpForm),
     answer: null,
   },
   {
@@ -123,6 +129,12 @@ const fairQuestions = ref([
     answer: null,
   },
   {
+    name: "signup",
+    question: "Where would you like us to send your offer?",
+    component: markRaw(SignUpForm),
+    answer: null,
+  },
+  {
     name: "estimate",
     component: markRaw(OfferResults),
     answer: true,
@@ -135,6 +147,12 @@ const badQuestions = ref([
     question:
       "Does your house have any present signs of settlement or sinkhole activity?",
     component: markRaw(BinaryQuestion),
+    answer: null,
+  },
+  {
+    name: "signup",
+    question: "Where would you like us to send your offer?",
+    component: markRaw(SignUpForm),
     answer: null,
   },
   {
@@ -347,7 +365,12 @@ function close() {
       <button @click="backQuestion" class="back">
         {{ backButtonText }}
       </button>
-      <button @click="nextQuestion" :disabled="nextButtonDisabled" class="next">
+      <button
+        @click="nextQuestion"
+        :disabled="nextButtonDisabled"
+        class="next"
+        :class="{ disabled: nextButtonDisabled }"
+      >
         {{ nextButtonText }}
       </button>
     </div>
@@ -411,6 +434,11 @@ function close() {
     .next {
       color: white;
       background-color: var(--color-brand);
+    }
+
+    .disabled {
+      cursor: not-allowed;
+      background-color: var(--color-brand-hover);
     }
   }
 }

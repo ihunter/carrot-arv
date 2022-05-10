@@ -39,7 +39,7 @@ const showDialog = ref(false);
 
       <DialogBox
         max-width="800px"
-        height="600px"
+        height="580px"
         :show="showDialog"
         @close="showDialog = false"
       >

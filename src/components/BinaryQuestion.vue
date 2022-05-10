@@ -46,6 +46,7 @@ defineEmits(["answer"]);
       padding: 1rem 1.5rem;
       border: 1px solid var(--color-brand);
       background: none;
+      cursor: pointer;
     }
 
     .selected {
