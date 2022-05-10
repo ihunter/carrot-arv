@@ -63,7 +63,15 @@ onMounted(() => {
 
 <template>
   <div class="offer-container">
-    <div class="offer-excellent" v-if="props.condition === 'excellent'">
+    <div class="offer-loading" v-if="props.loadingARV">
+      Getting Offer Results
+
+      <div>
+        <img src="@/assets/images/spinner.gif" alt="loading" />
+      </div>
+    </div>
+
+    <div class="offer-excellent" v-else-if="props.condition === 'excellent'">
       <p>It appears that your home is already in retail ready condition.</p>
       <p>
         Listing the property is the best bet to ensure that you receive the
@@ -110,6 +118,10 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .offer-container {
+  .offer-loading {
+    text-align: center;
+    font-size: 2rem;
+  }
   .offer-excellent {
     p {
       margin-bottom: 1rem;
