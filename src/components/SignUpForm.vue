@@ -1,7 +1,10 @@
 <script setup>
 import { computed } from "@vue/reactivity";
 import axios from "axios";
-import { reactive, ref, watch } from "vue";
+import { reactive, watch } from "vue";
+
+import { useForm, useField } from "vee-validate";
+import * as yup from "yup";
 
 const props = defineProps({
   question: String,
@@ -13,29 +16,26 @@ const api = axios.create({
   baseURL: "https://backend.ehomefacts.com/api",
 });
 
-const formData = reactive({
-  first_name: null,
-  last_name: null,
-  email: null,
-  phone: null,
+const schema = yup.object({
+  firstname: yup.string().required().min(1),
+  lastname: yup.string().required(),
+  email: yup.string().required().email(),
+  phone: yup.string().required(),
 });
 
-async function createAccount() {
-  try {
-    formData.username = formData.email;
-    await api.post("signup", formData);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-const valid = computed(() => {
-  return !!formData.email && !!formData.first_name && !!formData.last_name;
+const { meta } = useForm({
+  validationSchema: schema,
 });
 
-watch(valid, () => {
-  if (valid) {
-    emit("answer", formData);
+const { value: firstname, errorMessage: firstnameError } =
+  useField("firstname");
+const { value: lastname, errorMessage: lastnameError } = useField("lastname");
+const { value: email, errorMessage: emailError } = useField("email");
+const { value: phone, errorMessage: phoneError } = useField("phone");
+
+watch(meta, () => {
+  if (meta.value.valid) {
+    emit("answer", meta.value.valid);
   } else {
     emit("answer", null);
   }
@@ -47,30 +47,34 @@ watch(valid, () => {
     <h1>{{ props.question }}</h1>
     <form @submit.prevent="createAccount" class="sign-up-form">
       <input
-        v-model="formData.first_name"
+        v-model="firstname"
         class="col-6"
         type="text"
+        name="firstname"
         placeholder="First name"
       />
 
       <input
-        v-model="formData.last_name"
+        v-model="lastname"
         class="col-6"
         type="text"
+        name="lastname"
         placeholder="Last name"
       />
 
       <input
-        v-model="formData.email"
+        v-model="email"
         class="col-12"
         type="email"
+        name="email"
         placeholder="Email"
       />
 
       <input
-        v-model="formData.phone"
+        v-model="phone"
         class="col-12"
         type="tel"
+        name="phone"
         placeholder="Phone"
       />
     </form>
