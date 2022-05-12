@@ -1,20 +1,15 @@
 <script setup>
-import { computed } from "@vue/reactivity";
-import axios from "axios";
-import { reactive, watch } from "vue";
+import { watch } from "vue";
 
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 
 const props = defineProps({
   question: String,
+  currentAnswer: Object,
 });
 
 const emit = defineEmits(["answer"]);
-
-const api = axios.create({
-  baseURL: "https://backend.ehomefacts.com/api",
-});
 
 const schema = yup.object({
   firstname: yup.string().required().min(1),
@@ -35,7 +30,12 @@ const { value: phone, errorMessage: phoneError } = useField("phone");
 
 watch(meta, () => {
   if (meta.value.valid) {
-    emit("answer", meta.value.valid);
+    emit("answer", {
+      firstname,
+      lastname,
+      email,
+      phone,
+    });
   } else {
     emit("answer", null);
   }

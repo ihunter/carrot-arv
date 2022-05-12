@@ -5,7 +5,7 @@ import axios from "axios";
 // import { useARV } from "@/composables/arv.js";
 
 const api = axios.create({
-  baseURL: "https://backend.ehomefacts.com/api",
+  baseURL: "http://localhost:8000/api",
 });
 
 const props = defineProps({
@@ -44,6 +44,25 @@ async function calculateRehabCostsAPI() {
     rehab.value = res.data.rehab;
   } catch (error) {
     console.error("Error getting rehab calculation:", error);
+  }
+
+  const formattedAddress = `${props.answers.address.address}, ${props.answers.address.city}, ${props.answers.address.state} ${props.answers.address.zip1}`;
+
+  try {
+    await api.post("/contact_info", {
+      firstname: props.answers.signup.firstname,
+      lastname: props.answers.signup.lastname,
+      email: props.answers.signup.email,
+      phone: props.answers.signup.phone,
+      arv: props.arv,
+      cashOffer: cashOffer.value,
+      rehab: rehab.value,
+      fees: fees.value,
+      address: formattedAddress,
+      answers: JSON.stringify(props.answers),
+    });
+  } catch (error) {
+    console.error(error);
   }
 
   loading.value = false;
