@@ -5,7 +5,7 @@ import axios from "axios";
 // import { useARV } from "@/composables/arv.js";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000/api",
+  baseURL: "https://backend.ehomefacts.com/api",
 });
 
 const props = defineProps({
