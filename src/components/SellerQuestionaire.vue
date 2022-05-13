@@ -309,23 +309,31 @@ const livingArea = ref(null);
 const baths = ref(null);
 
 const loadingARV = ref(false);
+const errorMsg = ref(null);
 
 async function getARV(addressData) {
   loadingARV.value = true;
-  const res = await api.post("calc_arv", addressData);
 
-  const { data } = res;
+  try {
+    errorMsg.value = null;
+    const res = await api.post("calc_arv", addressData);
 
-  const comps = data.properties.comps;
-  const subject = data.properties.subject;
-  const constants = data.constants;
+    const { data } = res;
 
-  livingArea.value = subject.livingArea;
-  baths.value = subject.baths;
+    const comps = data.properties.comps;
+    const subject = data.properties.subject;
+    const constants = data.constants;
 
-  const { calculateARV } = useARV(comps, subject, constants, true);
+    livingArea.value = subject.livingArea;
+    baths.value = subject.baths;
 
-  arv.value = calculateARV();
+    const { calculateARV } = useARV(comps, subject, constants, true);
+
+    arv.value = calculateARV();
+  } catch (error) {
+    console.error(error);
+    errorMsg.value = error;
+  }
 
   loadingARV.value = false;
 }
@@ -357,6 +365,7 @@ function close() {
         :arv="arv"
         :answers="answers"
         :loadingARV="loadingARV"
+        :errorMsg="errorMsg"
         @answer="recordAnswer"
         @address="getARV"
       ></component>

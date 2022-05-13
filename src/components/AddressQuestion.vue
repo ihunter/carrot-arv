@@ -5,6 +5,7 @@ import { ref } from "vue";
 const props = defineProps({
   question: String,
   currentAnswer: Object,
+  errorMsg: Object,
 });
 
 const emit = defineEmits(["answer", "address"]);
@@ -41,6 +42,10 @@ async function setPlace(e) {
 
   emit("answer", addressData);
   emit("address", addressData);
+
+  if (!props.errorMsg) {
+    emit("answer", null);
+  }
 }
 
 const formattedAddress = computed(() => {
@@ -62,7 +67,11 @@ const formattedAddress = computed(() => {
     >
     </GMapAutocomplete>
 
-    <div class="address-container" v-if="formattedAddress">
+    <div v-if="props.errorMsg" class="error-message">
+      <h1>Unsupported Property</h1>
+      <h2>Unfortunately this property is not supported at this time.</h2>
+    </div>
+    <div class="address-container" v-else-if="formattedAddress">
       <h1>Selected Property</h1>
       <div class="property-address">{{ formattedAddress }}</div>
     </div>
@@ -88,6 +97,19 @@ const formattedAddress = computed(() => {
 
   .property-address {
     font-size: 2rem;
+  }
+}
+
+.error-message {
+  text-align: center;
+
+  h1 {
+    font-size: 2rem;
+    color: var(--color-error);
+  }
+
+  h2 {
+    font-size: 1.5rem;
   }
 }
 </style>
