@@ -15,14 +15,33 @@ const place = ref({});
 async function setPlace(e) {
   place.value = e;
 
-  const streetNumber = place.value.address_components[0].short_name;
-  const streetName = place.value.address_components[1].short_name;
-  const city = place.value.address_components[2].short_name;
-  const county = place.value.address_components[3].short_name;
-  const state = place.value.address_components[4].short_name;
-  // const country = place.value.address_components[5].short_name;
-  const zip1 = place.value.address_components[6].short_name;
-  const zip2 = place.value.address_components[7].short_name;
+  const streetNumber = place.value.address_components.find((comp) =>
+    comp.types.includes("street_number")
+  ).short_name;
+
+  const streetName = place.value.address_components.find((comp) =>
+    comp.types.includes("route")
+  ).short_name;
+
+  const city = place.value.address_components.find((comp) =>
+    comp.types.includes("locality")
+  ).short_name;
+
+  const county = place.value.address_components.find((comp) =>
+    comp.types.includes("administrative_area_level_2")
+  ).short_name;
+
+  const state = place.value.address_components.find((comp) =>
+    comp.types.includes("administrative_area_level_1")
+  ).short_name;
+
+  const zip1 = place.value.address_components.find((comp) =>
+    comp.types.includes("postal_code")
+  ).short_name;
+
+  const zip2 = place.value.address_components.find((comp) =>
+    comp.types.includes("postal_code_suffix")
+  ).short_name;
 
   const address = `${streetNumber} ${streetName}`;
 
@@ -39,6 +58,8 @@ async function setPlace(e) {
     zip1,
     zip2,
   };
+
+  console.log(addressData);
 
   emit("answer", addressData);
   emit("address", addressData);
