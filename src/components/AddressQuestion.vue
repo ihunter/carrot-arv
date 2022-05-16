@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "@vue/reactivity";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 const props = defineProps({
   question: String,
@@ -59,14 +59,9 @@ async function setPlace(e) {
     zip2,
   };
 
-  console.log(addressData);
-
-  emit("answer", addressData);
   emit("address", addressData);
 
-  if (!props.errorMsg) {
-    emit("answer", null);
-  }
+  emit("answer", addressData);
 }
 
 const formattedAddress = computed(() => {
@@ -75,6 +70,12 @@ const formattedAddress = computed(() => {
   }
 
   return false;
+});
+
+watch(props, () => {
+  if (props.errorMsg) {
+    emit("answer", null);
+  }
 });
 </script>
 
