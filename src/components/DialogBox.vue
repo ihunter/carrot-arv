@@ -19,7 +19,7 @@ const props = defineProps({
 });
 
 const displayStyle = computed(() => {
-  return props.show ? "block" : "none";
+  return props.show ? "flex" : "none";
 });
 </script>
 
@@ -34,7 +34,6 @@ const displayStyle = computed(() => {
       :style="{
         maxWidth: props.maxWidth,
         minHeight: props.height,
-        height: props.height,
       }"
       @click.stop
     >
@@ -48,6 +47,7 @@ const displayStyle = computed(() => {
   &-container {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
+    justify-content: center;
     z-index: 1; /* Sit on top */
     left: 0;
     top: 0;
@@ -59,6 +59,8 @@ const displayStyle = computed(() => {
   }
 
   &-content {
+    display: flex;
+    position: absolute;
     background-color: #fefefe;
     margin: 0 auto; /* 15% from the top and centered */
     margin-top: 10%;

@@ -15,7 +15,7 @@ const schema = yup.object({
   firstname: yup.string().required().min(1),
   lastname: yup.string().required(),
   email: yup.string().required().email(),
-  phone: yup.string().required(),
+  phone: yup.string(),
 });
 
 const { meta } = useForm({
@@ -46,37 +46,47 @@ watch(meta, () => {
   <div>
     <h1>{{ props.question }}</h1>
     <form @submit.prevent="createAccount" class="sign-up-form">
-      <input
-        v-model="firstname"
-        class="col-6"
-        type="text"
-        name="firstname"
-        placeholder="First name"
-      />
+      <div class="col-6">
+        <label for="firstname">* Firstname</label>
+        <input
+          v-model="firstname"
+          type="text"
+          name="firstname"
+          placeholder="First name"
+          required
+        />
+        <div class="error-message">{{ firstnameError }}</div>
+      </div>
 
-      <input
-        v-model="lastname"
-        class="col-6"
-        type="text"
-        name="lastname"
-        placeholder="Last name"
-      />
+      <div class="col-6">
+        <label for="lastname">* Lastname</label>
+        <input
+          v-model="lastname"
+          type="text"
+          name="lastname"
+          placeholder="Last name"
+          required
+        />
+        <div class="error-message">{{ lastnameError }}</div>
+      </div>
 
-      <input
-        v-model="email"
-        class="col-12"
-        type="email"
-        name="email"
-        placeholder="Email"
-      />
+      <div class="col-12">
+        <label for="email">* Email</label>
+        <input
+          v-model="email"
+          type="email"
+          name="email"
+          placeholder="Email"
+          required
+        />
+        <div class="error-message">{{ emailError }}</div>
+      </div>
 
-      <input
-        v-model="phone"
-        class="col-12"
-        type="tel"
-        name="phone"
-        placeholder="Phone"
-      />
+      <div class="col-12">
+        <label for="phone">Phone</label>
+        <input v-model="phone" type="tel" name="phone" placeholder="Phone" />
+        <div class="error-message">{{ phoneError }}</div>
+      </div>
     </form>
   </div>
 </template>
@@ -86,11 +96,23 @@ $input-margin: 0.5rem;
 $input-padding: 1rem;
 .sign-up-form {
   display: flex;
+  gap: 0.5rem;
   flex-wrap: wrap;
 
+  label {
+    margin: 0 $input-margin;
+    display: block;
+  }
+
   input {
+    width: 100%;
     padding: $input-padding;
-    margin: $input-margin;
+  }
+
+  .error-message {
+    color: #cc0033;
+    font-size: 14px;
+    margin: 5px 0 0;
   }
 }
 

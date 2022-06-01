@@ -398,7 +398,7 @@ function close() {
 .question-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
   .top-bar {
     height: 0.5rem;
     background-color: var(--color-brand);
@@ -423,8 +423,7 @@ function close() {
   .question-content {
     display: flex;
     flex-direction: column;
-    // justify-content: space-between;
-    flex: 1 1 auto;
+    flex: 1;
     padding: 1rem 1.5rem;
 
     h2 {
