@@ -218,6 +218,8 @@ const answers = computed(() => {
 function nextQuestion() {
   if (questionIndex.value + 1 < questions.value.length) {
     questionIndex.value++;
+  } else {
+    close();
   }
 }
 
@@ -297,7 +299,13 @@ const backButtonText = computed(() => {
 });
 
 const nextButtonText = computed(() => {
-  return questionIndex.value === 0 ? "Get Started" : "Next";
+  if (questionIndex.value === 0) {
+    return "Get Started";
+  } else if (questionIndex.value === questions.value.length - 1) {
+    return "Close";
+  } else {
+    return "Next";
+  }
 });
 
 const nextButtonDisabled = computed(() => {

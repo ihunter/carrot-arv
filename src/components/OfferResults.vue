@@ -68,9 +68,18 @@ async function calculateRehabCostsAPI() {
   loading.value = false;
 }
 
+function formatCurrency(value) {
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+
+  return formatter.format(value);
+}
+
 watch(
   () => props.loadingARV,
-  (newVal, oldVal) => {
+  () => {
     calculateRehabCostsAPI();
   }
 );
@@ -112,24 +121,24 @@ onMounted(() => {
     <div class="offer-results" v-else>
       <div class="offer-details">
         <div>Est. After Repair Value:</div>
-        <div>{{ props.arv }}</div>
+        <div>{{ formatCurrency(props.arv) }}</div>
       </div>
 
       <div class="offer-details">
         <div>Est. Rehab Costs:</div>
-        <div>{{ rehab }}</div>
+        <div>{{ formatCurrency(rehab) }}</div>
       </div>
 
       <div class="offer-details">
         <div>Fees:</div>
-        <div>{{ fees }}</div>
+        <div>{{ formatCurrency(fees) }}</div>
       </div>
 
       <hr />
 
       <div class="offer-details">
         <div>Cash Offer:</div>
-        <div>{{ cashOffer }}</div>
+        <div>{{ formatCurrency(cashOffer) }}</div>
       </div>
     </div>
   </div>
@@ -137,6 +146,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .offer-container {
+  font-size: 1.5rem;
   .offer-loading {
     text-align: center;
     font-size: 2rem;
