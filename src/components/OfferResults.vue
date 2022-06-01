@@ -146,7 +146,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .offer-container {
-  font-size: 1.5rem;
   .offer-loading {
     text-align: center;
     font-size: 2rem;
@@ -166,6 +165,7 @@ onMounted(() => {
     }
   }
   .offer-results {
+    font-size: 1.5rem;
     .offer-details {
       display: flex;
       justify-content: space-between;
