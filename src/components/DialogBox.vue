@@ -60,6 +60,7 @@ const displayStyle = computed(() => {
 
   &-content {
     display: flex;
+    width: 100%;
     position: absolute;
     background-color: #fefefe;
     margin: 0 auto; /* 15% from the top and centered */
