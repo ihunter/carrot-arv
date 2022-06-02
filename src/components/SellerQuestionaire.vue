@@ -57,7 +57,7 @@ const excellentQuestions = ref([
   {
     name: "estimate",
     component: markRaw(OfferResults),
-    answer: null,
+    answer: true,
   },
 ]);
 
