@@ -6,6 +6,8 @@ import BinaryQuestion from "@/components/BinaryQuestion.vue";
 import ConditionQuestion from "@/components/ConditionQuestion.vue";
 import OfferResults from "@/components/OfferResults.vue";
 import SignUpForm from "./SignUpForm.vue";
+import AgentFollowUp from "./AgentFollowUp.vue";
+import ProgressBar from "./ProgressBar.vue";
 
 import { useARV } from "@/composables/arv.js";
 
@@ -99,6 +101,11 @@ const goodQuestions = ref([
     component: markRaw(OfferResults),
     answer: true,
   },
+  {
+    name: "agent",
+    component: markRaw(AgentFollowUp),
+    answer: true,
+  },
 ]);
 
 const fairQuestions = ref([
@@ -139,6 +146,11 @@ const fairQuestions = ref([
     component: markRaw(OfferResults),
     answer: true,
   },
+  {
+    name: "agent",
+    component: markRaw(AgentFollowUp),
+    answer: true,
+  },
 ]);
 
 const badQuestions = ref([
@@ -158,6 +170,11 @@ const badQuestions = ref([
   {
     name: "estimate",
     component: markRaw(OfferResults),
+    answer: true,
+  },
+  {
+    name: "agent",
+    component: markRaw(AgentFollowUp),
     answer: true,
   },
 ]);
@@ -216,6 +233,22 @@ const answers = computed(() => {
 });
 
 function nextQuestion() {
+  if (
+    currentQuestion.value.name === "estimate" &&
+    answers.value.condition === "excellent"
+  ) {
+    sendContactInfo(true);
+    close();
+    return;
+  }
+
+  if (
+    currentQuestion.value.name === "estimate" &&
+    answers.value.condition !== "excellent"
+  ) {
+    sendContactInfo(true);
+  }
+
   if (questionIndex.value + 1 < questions.value.length) {
     questionIndex.value++;
   } else {
@@ -224,6 +257,24 @@ function nextQuestion() {
 }
 
 function backQuestion() {
+  if (
+    currentQuestion.value.name === "estimate" &&
+    answers.value.condition === "excellent"
+  ) {
+    sendContactInfo(false);
+    close();
+    return;
+  }
+
+  if (
+    currentQuestion.value.name === "estimate" &&
+    answers.value.condition !== "excellent"
+  ) {
+    sendContactInfo(false);
+    close();
+    return;
+  }
+
   if (questionIndex.value - 1 >= 0) {
     questionIndex.value--;
   } else {
@@ -295,21 +346,54 @@ const selectedCondtion = computed(() => {
 });
 
 const backButtonText = computed(() => {
+  if (
+    currentQuestion.value.name === "estimate" &&
+    answers.value.condition === "excellent"
+  ) {
+    return "No Thank You";
+  }
+
+  if (
+    currentQuestion.value.name === "estimate" &&
+    answers.value.condition !== "excellent"
+  ) {
+    return "Not Interested";
+  }
+
   return questionIndex.value === 0 ? "Cancel" : "Back";
 });
 
 const nextButtonText = computed(() => {
+  if (
+    currentQuestion.value.name === "estimate" &&
+    answers.value.condition === "excellent"
+  ) {
+    return "Yes Please";
+  }
+
+  if (
+    currentQuestion.value.name === "estimate" &&
+    answers.value.condition !== "excellent"
+  ) {
+    return "I'm Interested, What Are the Next Steps";
+  }
+
   if (questionIndex.value === 0) {
     return "Get Started";
-  } else if (questionIndex.value === questions.value.length - 1) {
-    return "Close";
-  } else {
-    return "Next";
   }
+
+  if (questionIndex.value === questions.value.length - 1) {
+    return "Close";
+  }
+
+  return "Next";
 });
 
 const nextButtonDisabled = computed(() => {
-  return currentQuestion.value.answer === null;
+  return (
+    currentQuestion.value.answer === null ||
+    (currentQuestion.value.name === "estimate" && loadingARV.value)
+  );
 });
 
 const arv = ref(null);
@@ -355,6 +439,66 @@ function close() {
   });
   questions.value = initQuestions.value;
 }
+
+async function sendContactInfo(answer) {
+  console.log("Send Contact Info:", answer);
+
+  const formattedAddress = `${answers.value.address.address}, ${answers.value.address.city}, ${answers.value.address.state} ${answers.value.address.zip1}`;
+  try {
+    await api.post("/contact_info", {
+      firstname: answers.value.signup.firstname,
+      lastname: answers.value.signup.lastname,
+      email: answers.value.signup.email,
+      phone: answers.value.signup.phone,
+      arv: arv.value,
+      cashOffer: cashOffer.value,
+      rehab: rehab.value,
+      fees: fees.value,
+      address: formattedAddress,
+      answers: JSON.stringify(answers.value),
+      contact: answer,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+const cashOffer = ref(0);
+const fees = ref(0);
+const rehab = ref(0);
+
+function setCashOffer(value) {
+  cashOffer.value = value;
+}
+
+function setFees(value) {
+  fees.value = value;
+}
+
+function setRehab(value) {
+  rehab.value = value;
+}
+
+const progressPercentage = computed(() => {
+  if (
+    (questionIndex.value + 1) / questions.value.length === 1 &&
+    questions.value.length > 2
+  ) {
+    return 100;
+  } else {
+    return (questionIndex.value / totalQuestions.value) * 100;
+  }
+});
+
+const totalQuestions = computed(() => {
+  return (
+    initQuestions.value.length +
+    excellentQuestions.value.length +
+    goodQuestions.value.length +
+    fairQuestions.value.length +
+    badQuestions.value.length
+  );
+});
 </script>
 
 <template>
@@ -376,10 +520,20 @@ function close() {
         :errorMsg="errorMsg"
         @answer="recordAnswer"
         @address="getARV"
+        @cash-offer="setCashOffer"
+        @fees="setFees"
+        @rehab="setRehab"
       ></component>
     </div>
+    <ProgressBar :progress="progressPercentage" />
     <div class="question-footer">
-      <button @click="backQuestion" class="back">
+      <button
+        v-if="currentQuestion.name !== 'agent'"
+        @click="backQuestion"
+        :disabled="currentQuestion.name === 'estimate' && loadingARV"
+        :class="{ disabled: currentQuestion.name === 'estimate' && loadingARV }"
+        class="back"
+      >
         {{ backButtonText }}
       </button>
       <button

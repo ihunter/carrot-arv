@@ -21,6 +21,8 @@ const props = defineProps({
   loadingARV: Boolean,
 });
 
+const emit = defineEmits(["cashOffer", "fees", "rehab"]);
+
 const loading = ref(false);
 const cashOffer = ref(0);
 const fees = ref(0);
@@ -42,28 +44,32 @@ async function calculateRehabCostsAPI() {
     cashOffer.value = res.data.cashOffer;
     fees.value = res.data.fees;
     rehab.value = res.data.rehab;
+
+    emit("cashOffer", cashOffer.value);
+    emit("fees", fees.value);
+    emit("rehab", rehab.value);
   } catch (error) {
     console.error("Error getting rehab calculation:", error);
   }
 
-  const formattedAddress = `${props.answers.address.address}, ${props.answers.address.city}, ${props.answers.address.state} ${props.answers.address.zip1}`;
+  // const formattedAddress = `${props.answers.address.address}, ${props.answers.address.city}, ${props.answers.address.state} ${props.answers.address.zip1}`;
 
-  try {
-    await api.post("/contact_info", {
-      firstname: props.answers.signup.firstname,
-      lastname: props.answers.signup.lastname,
-      email: props.answers.signup.email,
-      phone: props.answers.signup.phone,
-      arv: props.arv,
-      cashOffer: cashOffer.value,
-      rehab: rehab.value,
-      fees: fees.value,
-      address: formattedAddress,
-      answers: JSON.stringify(props.answers),
-    });
-  } catch (error) {
-    console.error(error);
-  }
+  // try {
+  //   await api.post("/contact_info", {
+  //     firstname: props.answers.signup.firstname,
+  //     lastname: props.answers.signup.lastname,
+  //     email: props.answers.signup.email,
+  //     phone: props.answers.signup.phone,
+  //     arv: props.arv,
+  //     cashOffer: cashOffer.value,
+  //     rehab: rehab.value,
+  //     fees: fees.value,
+  //     address: formattedAddress,
+  //     answers: JSON.stringify(props.answers),
+  //   });
+  // } catch (error) {
+  //   console.error(error);
+  // }
 
   loading.value = false;
 }
