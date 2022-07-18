@@ -446,6 +446,7 @@ async function sendContactInfo(answer) {
   const formattedAddress = `${answers.value.address.address}, ${answers.value.address.city}, ${answers.value.address.state} ${answers.value.address.zip1}`;
   try {
     await api.post("/contact_info", {
+      to_email: "info@ehomefacts.com",
       firstname: answers.value.signup.firstname,
       lastname: answers.value.signup.lastname,
       email: answers.value.signup.email,
